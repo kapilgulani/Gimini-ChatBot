@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deloitte Auditor Enterprise Chat UI</title>
+  <style>
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .chat-ui {
+      background-color: #fff;
+      border: 2px solid #000066;
+      border-radius: 4px;
+      width: 80%;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 10px;
+    }
+
+    .header,
+    .footer {
+      background-color: #000066;
+      color: #ffffff;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .input-box {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+    }
+
+    .buttons {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .button {
+      padding: 10px 20px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .send-button {
+      background-color: #0000cc;
+      color: white;
+    }
+
+    .cancel-button {
+      background-color: #660066;
+      color: white;
+    }
+
+    .response {
+      background-color: #dddddd;
+      color: black;
+      padding: 10px;
+      min-height: 100px;
+      width: calc(100% - 20px);
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      overflow-wrap: break-word;
+      overflow: auto;
+      text-align: left;
+    }
+
+    .chat-logo {
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .save-button-container {
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    .save-button {
+      background-color: #008000;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+    <div class="chat-ui">
+      <div class="header">
+        Deloitte Auditor Enterprise Chat UI
+      </div>
+      <div class="content">
+        <textarea class="input-box" placeholder="Enter your tax query here..." rows="6"></textarea>
+        <div class="buttons">
+          <button class="button send-button">
+            <img src="./logo.png" alt="Gemini Logo" class="chat-logo" />
+            Send
+          </button>
+          <button class="button cancel-button">Cancel</button>
+        </div>
+        <div class="response">
+          Response
+        </div>
+      </div>
+      <div class="buttons save-button-container">
+        <button class="button save-button" onclick="handleSaveClick()">Save</button>
+      </div>
+    </div>
+  
+    <!-- Move marked script to the bottom -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script>
+      window.onload = function () {
+        document.querySelector('.send-button').addEventListener('click', function () {
+          var taxPrompt = document.querySelector('.input-box').value;
+  
+          if (!isTaxRelated(taxPrompt)) {
+            alert('Please ask a tax-related question.');
+            return;
+          }
+  
+          var data = JSON.stringify({
+            prompt: taxPrompt
+          });
+  
+          var xhr = new XMLHttpRequest();
+          xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+              if (this.status === 200) {
+                var response = JSON.parse(this.responseText);
+  
+                // Convert the markdown response to HTML using marked
+                var textToDisplay = marked.parse(response.response);
+                
+                document.querySelector('.response').innerHTML = textToDisplay;
+              } else {
+                // Display error message to the user
+                document.querySelector('.response').innerHTML = 'Error: ' + this.responseText;
+                console.error('Error:', this.responseText);
+              }
+            }
+          });
+  
+          xhr.open("POST", "http://localhost:3000/generate-content");
+          xhr.setRequestHeader("Content-Type", "application/json");
+  
+          xhr.send(data);
+        });
+      };
+  
+      function handleSaveClick() {
+        var taxPrompt = document.querySelector('.input-box').value;
+        var responseText = document.querySelector('.response').textContent;
+        saveChat(taxPrompt, responseText);
+      }
+  
+      function saveChat(taxPrompt, responseText) {
+        var data = {
+          prompt: taxPrompt,
+          response: responseText
+        };
+  
+        var url = 'http://localhost:3000/save-chat';
+  
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+          })
+          .then(data => {
+            alert(`Chat saved with ID: ${data.id}`);
+          })
+          .catch(error => {
+            console.error('Error during save:', error);
+          });
+      }
+  
+      function isTaxRelated(prompt) {
+        var taxKeywords = ['tax', 'IRS', 'revenue', 'deduction', 'exemption', 'income', 'property', 'sales'];
+        return taxKeywords.some(keyword => prompt.toLowerCase().includes(keyword));
+      }
+    </script>
+  
+  </body>
+  
+  </html>
