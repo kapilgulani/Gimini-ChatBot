@@ -6,52 +6,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deloitte Auditor Enterprise Chat UI</title>
   <style>
-    body,
-    html {
+    body, html {
       height: 100%;
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #302c2c;
     }
 
     .chat-ui {
-      background-color: #fff;
-      border: 2px solid #000066;
-      border-radius: 4px;
-      width: 80%;
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 10px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 102, 0.1);
     }
 
-    .header,
-    .footer {
+    .header {
       background-color: #000066;
       color: #ffffff;
-      padding: 10px;
+      padding: 15px;
       text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 8px 8px 0 0;
+      margin: -20px -20px 20px -20px;
     }
 
     .input-box {
-      width: calc(100% - 20px);
-      padding: 10px;
+      width: calc(100% - 40px);
+      padding: 15px;
       margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      white-space: pre-wrap;
-      overflow-wrap: break-word;
+      border: 2px solid #3f4041;
+      border-radius: 8px;
+      font-size: 16px;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+    }
+
+    .input-box:focus {
+      outline: none;
+      border-color: #000066;
     }
 
     .buttons {
-      text-align: center;
-      padding: 10px 0;
+      display: flex;
+      justify-content: center;
+      padding: 15px 0;
     }
 
     .button {
-      padding: 10px 20px;
-      margin: 0 5px;
+      padding: 12px 25px;
+      margin: 0 10px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: all 0.3s ease;
     }
 
     .send-button {
@@ -59,73 +72,97 @@
       color: white;
     }
 
+    .send-button:hover {
+      background-color: #000099;
+    }
+
     .cancel-button {
       background-color: #660066;
       color: white;
     }
 
+    .cancel-button:hover {
+      background-color: #4d004d;
+    }
+
     .response {
-      background-color: #dddddd;
-      color: black;
-      padding: 10px;
-      min-height: 100px;
-      width: calc(100% - 20px);
-      margin-top: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      background-color: #f8f9fa;
+      color: #333;
+      padding: 20px;
+      min-height: 120px;
+      width: calc(100% - 40px);
+      margin-top: 20px;
+      border: 1px solid #e1e4e8;
+      border-radius: 8px;
+      font-size: 16px;
+      line-height: 1.6;
       overflow-wrap: break-word;
       overflow: auto;
-      text-align: left;
     }
 
     .chat-logo {
-      width: 20px;
-      height: 20px;
-      margin-right: 5px;
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
       vertical-align: middle;
     }
 
     .save-button-container {
-      margin-top: 5px;
+      margin-top: 20px;
       text-align: center;
     }
 
     .save-button {
       background-color: #008000;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 25px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .save-button:hover {
+      background-color: #006600;
+    }
+
+    @media (max-width: 600px) {
+      .chat-ui {
+        width: 95%;
+        margin: 15px auto;
+      }
+
+      .button {
+        padding: 10px 20px;
+      }
     }
   </style>
-
 </head>
 
 <body>
-
-    <div class="chat-ui">
-      <div class="header">
-        Deloitte Auditor Enterprise Chat UI
+  <div class="chat-ui">
+    <div class="header">
+      Deloitte Auditor Enterprise Chat UI
+    </div>
+    <div class="content">
+      <textarea class="input-box" placeholder="Enter your tax query here..." rows="6"></textarea>
+      <div class="buttons">
+        <button class="button send-button">
+          <img src="./logo.png" alt="Gemini Logo" class="chat-logo" />
+          Send
+        </button>
+        <button class="button cancel-button">Cancel</button>
       </div>
-      <div class="content">
-        <textarea class="input-box" placeholder="Enter your tax query here..." rows="6"></textarea>
-        <div class="buttons">
-          <button class="button send-button">
-            <img src="./logo.png" alt="Gemini Logo" class="chat-logo" />
-            Send
-          </button>
-          <button class="button cancel-button">Cancel</button>
-        </div>
-        <div class="response">
-          Response
-        </div>
-      </div>
-      <div class="buttons save-button-container">
-        <button class="button save-button" onclick="handleSaveClick()">Save</button>
+      <div class="response">
+        Response will appear here...
       </div>
     </div>
+    <div class="buttons save-button-container">
+      <button class="button save-button" onclick="handleSaveClick()">Save</button>
+    </div>
+  </div>
   
     <!-- Move marked script to the bottom -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
